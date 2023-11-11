@@ -1,6 +1,6 @@
 import os
 import tqdm
-  
+
 root_path = 'datasets/fire_and_smoke_detect/'
     
 files = os.listdir(os.path.join(root_path,'Fog','labels'))

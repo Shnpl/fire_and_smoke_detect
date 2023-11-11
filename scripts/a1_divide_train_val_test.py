@@ -1,7 +1,8 @@
 import os
+print(f'---current working directory:{os.getcwd()}---')
+
 root_path = 'datasets/fire_and_smoke_detect/Fog'
-print(f'---root path:{root_path}---')
-files = os.listdir(os.path.join(root_path,'labels'))
+files = os.listdir(os.path.join(root_path,'test','labels'))
 
 
 train_num = int(len(files)*0.7)

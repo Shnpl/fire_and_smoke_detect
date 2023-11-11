@@ -1,6 +1,6 @@
 import os
 
-root_path = 'datasets/fire_and_smoke_detect/val/labels'
+root_path = 'datasets/fire_and_smoke_detect/Fog/val/labels'
 files = os.listdir(root_path)
 for file in files:
     label_path = os.path.join(root_path, file)
