@@ -1,36 +1,22 @@
 # train the ir discriminator
 import sys
 sys.path.append('.')
-import torch
-from torch import nn
-from torch.utils.data import DataLoader
-from torchvision import transforms
-from tqdm import tqdm
-from modules.data.ir_discriminator_dataset import IRDiscriminatorDataset
-from models.ir_discriminator.ir_discriminator import IRDiscriminator
 
-def train_ir_discriminator():
-    model = IRDiscriminator()
-    model.train()
-    model.cuda()
-    criterion = nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+import pytorch_lightning as pl
+from pytorch_lightning.loggers import TensorBoardLogger
 
-    dataset = IRDiscriminatorDataset()
-    dataloader = DataLoader(dataset,batch_size=16,shuffle=True)
-    for epoch in range(10):
-        for images,labels in tqdm(dataloader):
-            images = images.cuda()
-            labels = labels.cuda()
-            # labels to one-hot
-            labels = torch.zeros(labels.shape[0],2).cuda().scatter_(1,labels.unsqueeze(1),1,)
+from models.ir_discriminator.ir_discriminator import IRDiscriminator_Litmodel
 
-            optimizer.zero_grad()
-            outputs = model(images)
-            loss = criterion(outputs,labels)
-            loss.backward()
-            optimizer.step()
-        print(f'epoch:{epoch},loss:{loss.item()}')
-    #torch.save(model.state_dict(),f'checkpoints/ir_discriminator/{epoch}.pth')
+def main():
+    hparams = {
+        'batch_size':16,
+        'loss':'cross_entropy',
+        'lr':1e-3,
+        'max_epochs':3
+    }
+    logger = TensorBoardLogger(save_dir='lightning_logs',name='ir_discriminator')
+    trainer = pl.Trainer(devices=1,max_epochs=hparams['max_epochs'],logger=logger)
+    model = IRDiscriminator_Litmodel(hparams)
+    trainer.fit(model)
 if __name__ == '__main__':
-    train_ir_discriminator()
+    main()
